@@ -1,9 +1,12 @@
 var express = require('express'),
     bodyParser = require('body-parser'),
+    multiparty = require('connect-multiparty'),
     mongodb = require('mongodb'),
-    objectID = require('mongodb').ObjectId;
+    objectID = require('mongodb').ObjectId,
+    fs = require('fs');
 
 var app = express();
+app.use(multiparty());
 
 app.use(bodyParser.urlencoded({ extended: true}));
 
@@ -24,21 +27,42 @@ app.get('/',function(req, res){
 
 //POST
 app.post('/api',function(req, res){
-  var data = req.body;
+res.setHeader("Access-Control-Allow-Origin","*");
 
-  db.open(function(err, mongoclient){
-    mongoclient.collection('posts',function(err, collection){
-      collection.insert(data,function(err, records){
-        if(err){
-          res.json(err);
-        }
-        else{
-          res.json(records);
-        }
-        mongoclient.close();
-      });
+
+  var date = new Date();
+  var timestamp = date.getTime();
+  
+  var path_original = req.files.file.path;
+  var file_name = timestamp + '_'+ req.files.file.originalFilename;
+
+  var path_destination = './uploads/' + file_name;
+
+  fs.rename(path_original, path_destination, function(err){
+    if(err){
+      res.status(500).json({error: err });
+      return;
+    }
+
+    var data = {
+      url_image: file_name,
+      title: req.body.title
+    }
+
+    db.open(function(err, mongoclient){
+      mongoclient.collection('posts',function(err, collection){
+        collection.insert(data,function(err, records){
+          if(err){
+            res.json({'status': 'error'});
+          }
+          else{
+            res.json({'status': 'post included with success'});
+          }
+          mongoclient.close();
+        });
+      })
     })
-  })
+  });
 
 })
 

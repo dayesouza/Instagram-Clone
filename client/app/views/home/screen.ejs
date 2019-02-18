@@ -28,6 +28,30 @@
 					return false;
 				});
 
+				$('#btn-post').click(function(){
+					// create a form data
+					var formData = new FormData();
+
+					var file = document.getElementById("file").files[0];
+					var title = document.getElementById("title").value;
+
+					formData.append("file", file);
+					formData.append("title", title);
+
+					var xhr = new XMLHttpRequest();
+
+					xhr.onreadystatechange = function(){
+						if(xhr.readyState == 4){
+							var response = xhr.responseText;
+							document.getElementById("message").innerHTML = response;
+						}
+					}
+
+					xhr.open("POST","http://localhost:3100/api");
+					xhr.send(formData);
+
+				})
+
 			});
 		</script>
 
