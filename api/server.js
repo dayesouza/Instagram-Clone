@@ -25,6 +25,23 @@ app.get('/',function(req, res){
   res.send({ msg: 'hello'});
 })
 
+
+app.get('/images/:image',function(req, res){
+  var img = req.params.image;
+
+  fs.readFile('./uploads/'+img, function(err, content){
+    if(err){
+      res.status(400).json(err);
+      return;
+    }
+
+    res.writeHead(200, {'content-type': 'image/jpg'});
+    res.end(content);
+
+  });
+
+})
+
 //POST
 app.post('/api',function(req, res){
 res.setHeader("Access-Control-Allow-Origin","*");
@@ -68,6 +85,7 @@ res.setHeader("Access-Control-Allow-Origin","*");
 
 //GET ALL
 app.get('/api',function(req, res){
+res.setHeader("Access-Control-Allow-Origin","*");
   var data = req.body;
   var status_code = 200;
 
@@ -81,6 +99,8 @@ app.get('/api',function(req, res){
           if(results.length == 0){
             status_code = 404;
           }
+  console.log(results);
+
           res.status(status_code).json(results);
         }
         mongoclient.close();
