@@ -17,6 +17,30 @@
 		<script>
 			$(document).ready(function(){
 
+				function load_posts() {
+					var xhr = new XMLHttpRequest();
+					xhr.open("GET","http://localhost:3100/api");
+
+					xhr.onload = function(){
+						if(xhr.status === 200) {
+							var data = $.parseJSON(xhr.responseText);
+							for(i = 0; i< data.length; i++){
+								$('#container_timeline').append(
+									'<div class="post">' +
+										'<span class="title">' + data[i].title +
+											'</span>'+
+											'<img src="http://localhost:3100/images/'+data[i].url_image+'" />'
+											+'</div>'
+								)
+							}
+						}
+					}
+					xhr.send();
+					
+				}
+
+				load_posts();
+
 				$('#btn_add').click(function(){
 					$('#container_timeline').hide();
 					$('#container_form').show();
