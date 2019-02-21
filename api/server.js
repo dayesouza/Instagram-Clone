@@ -7,6 +7,15 @@ var express = require('express'),
 
 var app = express();
 app.use(multiparty());
+app.use(function(req, res, next){
+
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.setHeader("Access-Control-Allow-Credentials", true);
+
+  next();
+})
 
 app.use(bodyParser.urlencoded({ extended: true}));
 
@@ -44,7 +53,6 @@ app.get('/images/:image',function(req, res){
 
 //POST
 app.post('/api',function(req, res){
-res.setHeader("Access-Control-Allow-Origin","*");
 
 
   var date = new Date();
@@ -85,7 +93,6 @@ res.setHeader("Access-Control-Allow-Origin","*");
 
 //GET ALL
 app.get('/api',function(req, res){
-res.setHeader("Access-Control-Allow-Origin","*");
   var data = req.body;
   var status_code = 200;
 
@@ -143,7 +150,7 @@ app.put('/api/:id',function(req, res){
     mongoclient.collection('posts',function(err, collection){
       collection.update(
         {_id: objectID(req.params.id)},
-        {$set: {title : req.body.title}},
+        {$set: {title: req.body.title}},
         {},
         function(err, records){
           if(err){
@@ -158,6 +165,40 @@ app.put('/api/:id',function(req, res){
 
     });
   })
+})
+
+//PUT comment with ID
+app.put('/api/comment/:id', function(req, res){
+  var data = req.body;
+  console.log(req.body);
+  res.send('OK');
+
+  // db.open(function(err, mongoclient){
+  //   mongoclient.collection('posts',function(err, collection){
+  //     collection.update(
+  //       {_id: objectID(req.params.id)},
+  //       {
+  //         $push: {
+  //           comments: {
+  //             id_comment: new ObjectId(),
+  //             comment: req.body.comment
+  //           }
+  //         }
+  //       },
+  //       {},
+  //       function(err, records){
+  //         if(err){
+  //           res.json("Error: "+err);
+  //         }
+  //         else{
+  //           res.json(records);
+  //         }
+  //         mongoclient.close();
+  //       }
+  //     )
+
+  //   });
+  // })
 })
 
 //DELETE with ID

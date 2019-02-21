@@ -30,14 +30,39 @@
 										'<span class="title">' + data[i].title +
 											'</span>'+
 											'<img src="http://localhost:3100/images/'+data[i].url_image+'" />'
+											+ '<div class="comment">'
+											+ '<input type="text" id="post_'+data[i]._id+'" class="form-control input_comment" placeholder="Add a comment"/>'
+											+ '<button class="btn btn-default btn_post_comment" value="'+data[i]._id+'" type="button">Comment</button>'
+											+ '</div>'
 											+'</div>'
 								)
 							}
+
+							$(".btn_post_comment").click(function(){
+								console.log("ooo");
+								var id = this.value;
+								var value_comment = $("#post_"+id).val();
+								console.log(value_comment);
+
+								var xhr = new XMLHttpRequest();
+								// Set request json type
+								xhr.open('PUT', 'http://localhost:3100/api/comment/'+id);
+								xhr.setRequestHeader('Content-Type', 'application/json');
+								xhr.onload = function() {
+									alert(xhr.responseText);
+								}
+								xhr.send(JSON.stringify({comment: $("#post_"+id).val()}));
+							})
+
 						}
 					}
 					xhr.send();
+
+
+
 					
 				}
+
 
 				load_posts();
 
