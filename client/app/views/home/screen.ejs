@@ -47,9 +47,12 @@
 								var xhr = new XMLHttpRequest();
 								// Set request json type
 								xhr.open('PUT', 'http://localhost:3100/api/comment/'+id);
-								xhr.setRequestHeader('Content-Type', 'application/json');
+								xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
 								xhr.onload = function() {
-									alert(xhr.responseText);
+									if(xhr.status === 200){
+										window.location.href = '/home';
+
+									}
 								}
 								xhr.send(JSON.stringify({comment: $("#post_"+id).val()}));
 							})

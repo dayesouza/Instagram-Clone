@@ -18,6 +18,7 @@ app.use(function(req, res, next){
 })
 
 app.use(bodyParser.urlencoded({ extended: true}));
+app.use(bodyParser.json());
 
 var port = 3100;
 
@@ -170,35 +171,34 @@ app.put('/api/:id',function(req, res){
 //PUT comment with ID
 app.put('/api/comment/:id', function(req, res){
   var data = req.body;
-  console.log(req.body);
-  res.send('OK');
 
-  // db.open(function(err, mongoclient){
-  //   mongoclient.collection('posts',function(err, collection){
-  //     collection.update(
-  //       {_id: objectID(req.params.id)},
-  //       {
-  //         $push: {
-  //           comments: {
-  //             id_comment: new ObjectId(),
-  //             comment: req.body.comment
-  //           }
-  //         }
-  //       },
-  //       {},
-  //       function(err, records){
-  //         if(err){
-  //           res.json("Error: "+err);
-  //         }
-  //         else{
-  //           res.json(records);
-  //         }
-  //         mongoclient.close();
-  //       }
-  //     )
+  db.open(function(err, mongoclient){
+    mongoclient.collection('posts',function(err, collection){
+      console.log(err);
+      collection.update(
+        {_id: objectID(req.params.id)},
+        {
+          $push: {
+            comments: {
+              id_comment: new objectID(),
+              comment: req.body.comment
+            }
+          }
+        },
+        {},
+        function(err, records){
+          if(err){
+            res.json("Error: "+err);
+          }
+          else{
+            res.json(records);
+          }
+          mongoclient.close();
+        }
+      )
 
-  //   });
-  // })
+    });
+  })
 })
 
 //DELETE with ID
