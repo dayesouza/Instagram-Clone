@@ -221,3 +221,31 @@ app.delete('/api/:id',function(req, res){
   })
 })
 
+//DELETE comments with ID
+app.delete('/api/comment/:id',function(req, res){
+
+  db.open(function(err, mongoclient){
+    mongoclient.collection('posts',function(err, collection){
+      console.log(err);
+      collection.update(
+        {},// documents
+        { 
+          $pull: {
+            comments: { id_comment: objectID(req.params.id)}
+          }
+        },  //id comment equal
+        {multi: true}
+        ,function(err, records){
+        if(err){
+          res.json("Error: "+err);
+        }
+        else{
+          res.json(records);
+        }
+        mongoclient.close();
+      })
+
+    });
+  })
+})
+
